@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: eureka-server
+    
+#server:
+#  port: 2001
+  
+eureka:
+  server:
+    enable-self-preservation: false #关闭保护模式 心跳检查失败 则删除注册地址
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}    
+#  instance:
+#    hostname: eureka1
+#  client:
+#    register-with-eureka: false #单台注册中心不需要对自己注册和拉取
+#    fetch-registry: false
+
+---
+spring:
+  profiles: eureka1
+
+server:
+  port: 2001
+  
+# eureka1 向 eureka2 注册
+eureka:
+  instance:
+    hostname: eureka1
+  client:
+    service-url: 
+      defaultZone: http://eureka2:2002/eureka
+
+---
+spring:
+  profiles: eureka2
+
+server:
+  port: 2002
+  
+# eureka2 向 eureka1 注册
+eureka:
+  instance:
+    hostname: eureka2
+  client:
+    service-url:
+      defaultZone: http://eureka1:2001/eureka

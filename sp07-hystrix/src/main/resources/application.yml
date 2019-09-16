@@ -1,0 +1,38 @@
+#spring:
+#  application:
+#    name: ribbon
+    
+spring:
+  application:
+    name: hystrix    
+    
+server:
+  port: 3001
+  
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka1:2001/eureka, http://eureka2:2002/eureka
+
+ribbon:
+  MaxAutoRetriesNextServer: 2  #向后尝试两台服务器 如果后面没有两台则自身就是第二台 再重试一次
+  MaxAutoRetries: 1 #对单台服务器重试次数
+  OkToRetryOnAllOperations: true 
+  #设置为false只对get请求重试 不对post请求重试防止数据(网络不通导致超时重试)写入两次
+  
+  hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500
+            
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream   
+#*表示暴露所有监控端点         
+            
+            
